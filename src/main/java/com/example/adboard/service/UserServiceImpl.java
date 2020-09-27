@@ -123,8 +123,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("isAnonymous() or isAuthenticated()")
     public User getUser(Long id) {
-        return null;
+        return userRepository.getOne(id);
     }
 
     @Override
