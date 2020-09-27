@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @PreAuthorize("isAnonymous()")
