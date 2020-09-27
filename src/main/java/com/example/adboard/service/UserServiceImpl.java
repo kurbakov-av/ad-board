@@ -130,7 +130,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
     public void save(User user) {
-
+        userRepository.save(user);
     }
 }
