@@ -2,6 +2,7 @@ package com.example.adboard.service;
 
 import com.example.adboard.domain.user.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,18 +81,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void remove(Long userId) {
-
+        userRepository.deleteById(userId);
     }
 
     @Override
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?")
+    @PreAuthorize("hasRole('ADMIN')")
     public void removeNonActive() {
-
+        userRepository.findAllByActivation_ActiveFalse().forEach(userRepository::delete);
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public void softRemove(Long userId) {
-
+        User user = userRepository.getOne(userId);
+        user.setMarkRemoved(true);
+        userRepository.save(user);
     }
 
     @Override
