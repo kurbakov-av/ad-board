@@ -29,8 +29,10 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("isAnonymous() or isAuthenticated()")
     public Page<Ad> getPublishedAds(Pageable pageable) {
-        return null;
+        return adRepository.findAllByStatus(Status.PUBLISHED, pageable);
     }
 
     @Override
