@@ -66,8 +66,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("isAnonymous()")
     public void changePassword(String resetCode, String newPassword) {
+        User user = userRepository.findByPassword_Reset_ResetCode(resetCode)
+                .orElseThrow(() -> new EntityNotFoundException("Entity not found by reset code -> " + resetCode));
 
+        Password password = new Password();
+        password.setValue(passwordEncoder.encode(newPassword));
+        user.setPassword(password);
+
+        userRepository.save(user);
     }
 
     @Override
