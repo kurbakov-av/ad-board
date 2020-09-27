@@ -10,7 +10,10 @@ import com.example.adboard.web.form.RegisterForm;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +49,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("isAnonymous()")
     public void requestResetPasswordCode(String identity) {
+        User user = userRepository.findByUsernameOrEmail(identity, identity)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + identity));
 
+        Password.Reset reset = new Password.Reset();
+        reset.setResetCode(UUID.randomUUID().toString());
+        reset.setExpiredAt(LocalDateTime.now().plusMinutes(15));
+
+        Password password = user.getPassword();
+        password.setReset(reset);
+
+        userRepository.save(user);
     }
 
     @Override
