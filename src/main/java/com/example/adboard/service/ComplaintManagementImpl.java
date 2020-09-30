@@ -1,5 +1,6 @@
 package com.example.adboard.service;
 
+import com.example.adboard.domain.Status;
 import com.example.adboard.domain.complaint.Complaint;
 import com.example.adboard.domain.complaint.ComplaintRepository;
 import com.example.adboard.domain.user.User;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +29,13 @@ public class ComplaintManagementImpl implements ComplaintManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER') and #principal.username.equalsIgnoreCase(#complaint.author.username)")
     public void revoke(Complaint complaint) {
+        Assert.state(complaint.getStatus().isModeration(), "Complaint not in moderation");
 
+        complaint.setStatus(Status.CLOSE);
+        complaintRepository.save(complaint);
     }
 
     @Override
