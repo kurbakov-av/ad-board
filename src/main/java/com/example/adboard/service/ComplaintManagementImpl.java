@@ -52,7 +52,12 @@ public class ComplaintManagementImpl implements ComplaintManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER') and #principal.username.equalsIgnoreCase(#complaint.author.username)")
     public void toModeration(Complaint complaint) {
+        Assert.state(complaint.getStatus().isCreated(), "Complaint not new");
 
+        complaint.setStatus(Status.MODERATION);
+        complaintRepository.save(complaint);
     }
 }
