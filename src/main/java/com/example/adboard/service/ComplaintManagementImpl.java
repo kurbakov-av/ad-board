@@ -4,6 +4,7 @@ import com.example.adboard.domain.Status;
 import com.example.adboard.domain.complaint.Complaint;
 import com.example.adboard.domain.complaint.ComplaintRepository;
 import com.example.adboard.domain.user.User;
+import com.example.adboard.util.ComplaintMapper;
 import com.example.adboard.web.form.ComplaintForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,8 @@ public class ComplaintManagementImpl implements ComplaintManagement {
     private final ComplaintRepository complaintRepository;
 
     private final UserService userService;
+
+    private final ComplaintMapper mapper;
 
     @Override
     @Transactional
@@ -39,8 +42,13 @@ public class ComplaintManagementImpl implements ComplaintManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER') and !(#principal.username.equalsIgnoreCase(#blamed.username))")
     public void create(User blamed, ComplaintForm form) {
-
+        Complaint complaint = mapper.toComplaint(form);
+        complaint.setAuthor(userService.getCurrentUser());
+        complaint.setAddressedUser(blamed);
+        complaintRepository.save(complaint);
     }
 
     @Override
