@@ -35,6 +35,11 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
     @Override
     public void sendSuccessChangePassword(String email) {
-
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Password change successful");
+        message.setText("Password change successful");
+        message.setSentDate(new Date());
+        mailSender.send(message);
     }
 }
