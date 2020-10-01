@@ -27,8 +27,13 @@ public class ModeratorFeedbackManagement implements ModeratorManagement<Feedback
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
     public void reject(Feedback entity) {
+        Assert.state(entity.getStatus().isModeration(), "Feedback not being moderated");
 
+        entity.setStatus(Status.REJECT);
+        feedbackRepository.save(entity);
     }
 
     @Override
