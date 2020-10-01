@@ -47,7 +47,12 @@ public class ModeratorAdManagement implements ModeratorManagement<Ad> {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODEATOR')")
     public void unban(Ad entity) {
+        Assert.state(entity.getStatus().isBlock(), "Ad not blocked");
 
+        entity.setStatus(Status.MODERATION);
+        adRepository.save(entity);
     }
 }
