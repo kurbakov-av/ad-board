@@ -27,8 +27,13 @@ public class ModeratorComplaintManagement implements ModeratorManagement<Complai
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
     public void reject(Complaint entity) {
+        Assert.state(entity.getStatus().isModeration(), "Complaint not being moderated");
 
+        entity.setStatus(Status.REJECT);
+        complaintRepository.save(entity);
     }
 
     @Override
