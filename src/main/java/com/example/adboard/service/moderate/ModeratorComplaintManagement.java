@@ -54,7 +54,12 @@ public class ModeratorComplaintManagement implements ModeratorManagement<Complai
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
     public void unban(Complaint entity) {
+        Assert.state(entity.getStatus().isBlock(), "Complaint not blocked");
 
+        entity.setStatus(Status.MODERATION);
+        complaintRepository.save(entity);
     }
 }
