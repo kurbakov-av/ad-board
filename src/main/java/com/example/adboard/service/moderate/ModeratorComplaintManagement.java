@@ -37,8 +37,20 @@ public class ModeratorComplaintManagement implements ModeratorManagement<Complai
     }
 
     @Override
-    public void ban(Complaint entity) {
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
+    public void ban(Iterable<Complaint> list) {
+        ModeratorManagement.super.ban(list);
+    }
 
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
+    public void ban(Complaint entity) {
+        Assert.state(!entity.getStatus().isBlock(), "Complaint already blocked");
+
+        entity.setStatus(Status.BLOCK);
+        complaintRepository.save(entity);
     }
 
     @Override
