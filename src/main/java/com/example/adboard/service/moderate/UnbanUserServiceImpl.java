@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class UnblockUserServiceImpl implements UnblockUserService {
+public class UnbanUserServiceImpl implements UnbanUserService {
 
     private final UserUnbanRepository userUnbanRepository;
 
@@ -24,7 +24,7 @@ public class UnblockUserServiceImpl implements UnblockUserService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('MODERATOR')")
-    public void unblock(UserBan block, String reason) {
+    public void unban(UserBan block, String reason) {
         User targetUser = block.getTargetUser();
         Assert.state(targetUser.isBlocked(), "User not blocked");
 

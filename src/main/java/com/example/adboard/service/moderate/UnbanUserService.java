@@ -2,7 +2,7 @@ package com.example.adboard.service.moderate;
 
 import com.example.adboard.domain.user.ban.UserBan;
 
-public interface UnblockUserService {
+public interface UnbanUserService {
 
-    void unblock(UserBan block, String reason);
+    void unban(UserBan block, String reason);
 }
