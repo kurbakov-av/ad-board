@@ -27,8 +27,13 @@ public class ModeratorAdManagement implements ModeratorManagement<Ad> {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
     public void reject(Ad entity) {
+        Assert.state(entity.getStatus().isModeration(), "Ad not being moderated");
 
+        entity.setStatus(Status.REJECT);
+        adRepository.save(entity);
     }
 
     @Override
