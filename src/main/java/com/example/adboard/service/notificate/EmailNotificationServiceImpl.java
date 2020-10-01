@@ -25,7 +25,12 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
     @Override
     public void sendResetPasswordCode(String email, String code) {
-
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Reset password code");
+        message.setText(code);
+        message.setSentDate(new Date());
+        mailSender.send(message);
     }
 
     @Override
