@@ -3,6 +3,7 @@ package com.example.adboard.service;
 import com.example.adboard.domain.ad.Ad;
 import com.example.adboard.domain.feedback.Feedback;
 import com.example.adboard.domain.feedback.FeedbackRepository;
+import com.example.adboard.util.FeedbackMapper;
 import com.example.adboard.web.form.FeedbackForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ public class FeedbackManagementImpl implements FeedbackManagement {
 
     private final UserService userService;
 
+    private final FeedbackMapper mapper;
+
     @Override
     @Transactional
     @PreAuthorize("hasRole('USER')")
@@ -27,8 +30,13 @@ public class FeedbackManagementImpl implements FeedbackManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER') and #principal.username.equalsIgnoreCase(#ad.author.username)")
     public void create(Ad ad, FeedbackForm form) {
-
+        Feedback feedback = mapper.toFeedback(form);
+        feedback.setAuthor(userService.getCurrentUser());
+        feedback.setAd(ad);
+        feedbackRepository.save(feedback);
     }
 
     @Override
