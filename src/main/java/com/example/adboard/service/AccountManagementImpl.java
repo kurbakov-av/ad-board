@@ -1,6 +1,7 @@
 package com.example.adboard.service;
 
 import com.example.adboard.domain.image.Image;
+import com.example.adboard.domain.user.ContactCard;
 import com.example.adboard.domain.user.Password;
 import com.example.adboard.domain.user.User;
 import com.example.adboard.web.form.AccountForm;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +45,26 @@ public class AccountManagementImpl implements AccountManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
     public void update(AccountForm form) {
+        User currentUser = userService.getCurrentUser();
+        ContactCard contact = currentUser.getContactCard();
 
+        ContactCard newContactCard = new ContactCard();
+        newContactCard.setFirstName(getDefaultIfEmpty(form.getFirstName(), contact.getFirstName()));
+        newContactCard.setLastName(getDefaultIfEmpty(form.getLastName(), contact.getLastName()));
+
+        currentUser.setContactCard(newContactCard);
+
+        userService.save(currentUser);
+    }
+
+    private String getDefaultIfEmpty(String value, String defaultValue) {
+        if (StringUtils.isEmpty(value)) {
+            return defaultValue;
+        }
+
+        return value;
     }
 }
