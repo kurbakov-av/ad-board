@@ -1,5 +1,6 @@
 package com.example.adboard.service;
 
+import com.example.adboard.domain.Status;
 import com.example.adboard.domain.ad.Ad;
 import com.example.adboard.domain.feedback.Feedback;
 import com.example.adboard.domain.feedback.FeedbackRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,12 @@ public class FeedbackManagementImpl implements FeedbackManagement {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER') and #principal.username.equalsIgnoreCase(#feedback.author.username)")
     public void toModeration(Feedback feedback) {
+        Assert.state(!feedback.getStatus().isCreated(), "Feedback not new");
 
+        feedback.setStatus(Status.MODERATION);
+        feedbackRepository.save(feedback);
     }
 }
