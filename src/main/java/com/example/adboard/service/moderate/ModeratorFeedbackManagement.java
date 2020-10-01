@@ -37,8 +37,20 @@ public class ModeratorFeedbackManagement implements ModeratorManagement<Feedback
     }
 
     @Override
-    public void ban(Feedback entity) {
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
+    public void ban(Iterable<Feedback> list) {
+        ModeratorManagement.super.ban(list);
+    }
 
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('MODERATOR')")
+    public void ban(Feedback entity) {
+        Assert.state(!entity.getStatus().isBlock(), "Feedback already blocked");
+
+        entity.setStatus(Status.BLOCK);
+        feedbackRepository.save(entity);
     }
 
     @Override
