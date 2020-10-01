@@ -1,0 +1,16 @@
+package com.example.adboard.service.moderate;
+
+import com.example.adboard.domain.user.User;
+import com.example.adboard.web.form.UserBanForm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class BanUserServiceImpl implements BanUserService {
+
+    @Override
+    public void ban(User user, UserBanForm form) {
+
+    }
+}
