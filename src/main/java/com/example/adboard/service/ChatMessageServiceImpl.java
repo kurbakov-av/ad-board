@@ -27,7 +27,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
     public Page<ChatMessage> getPageMessages(Chat chat, Pageable pageable) {
-        return null;
+        return chatMessageRepository.findAllByChat(chat, pageable);
     }
 }
